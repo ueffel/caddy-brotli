@@ -6,6 +6,9 @@ Requires Caddy 2+.
 
 Uses the pure go brotli implementation <https://github.com/andybalholm/brotli>
 
+This implementation is NOT high performance, so it is not recommended to use this encoding as
+primary compression algorithm. Use gzip instead.
+
 ## Syntax
 
 There will be the new encoding `br` available within the
@@ -46,48 +49,50 @@ encode {
 
 ## Remarks
 
-There is currently no way to set a prefered order of content-encodings via
-caddy's configuration. The content-encoding is determined by the clients
-preference. In most cases that means a response is encoded with the first
-accepted encoding in the `Accept-Encoding` header of the request that the caddy
-also supports.
+Update: Since Caddy v2.4.0-beta.2 the preferred order of encodings can be set via `prefer` setting.
 
-Example:
-
-Caddyfile
-
-```caddyfile
-encode gzip br
-```
-
-* Request:
-
-  ```plain
-  [...]
-  Accept-Encoding: deflate, gzip, br
-  [...]
-  ```
-
-  Response will be:
-
-  ```plain
-  [...]
-  Content-Encoding: gzip
-  [...]
-  ```
-
-* Request: (different order of encodings)
-
-  ```plain
-  [...]
-  Accept-Encoding: deflate, br, gzip
-  [...]
-  ```
-
-  Response will be:
-
-  ```plain
-  [...]
-  Content-Encoding: br
-  [...]
-  ```
+> There is currently no way to set a prefered order of content-encodings via
+> caddy's configuration. The content-encoding is determined by the clients
+> preference. In most cases that means a response is encoded with the first
+> accepted encoding in the `Accept-Encoding` header of the request that the caddy
+> also supports.
+>
+> Example:
+>
+> Caddyfile
+>
+> ```caddyfile
+> encode gzip br
+> ```
+>
+> * Request:
+>
+>   ```plain
+>   [...]
+>   Accept-Encoding: deflate, gzip, br
+>   [...]
+>   ```
+>
+>   Response will be:
+>
+>   ```plain
+>   [...]
+>   Content-Encoding: gzip
+>   [...]
+>   ```
+>
+> * Request: (different order of encodings)
+>
+>   ```plain
+>   [...]
+>   Accept-Encoding: deflate, br, gzip
+>   [...]
+>   ```
+>
+>   Response will be:
+>
+>   ```plain
+>   [...]
+>   Content-Encoding: br
+>   [...]
+>   ```
