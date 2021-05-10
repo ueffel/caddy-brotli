@@ -49,6 +49,8 @@ encode {
 
 ## Remarks
 
+Update 2: From Caddy v2.4.0 onwards preferred order is implied by definition order.
+
 Update: Since Caddy v2.4.0-beta.2 the preferred order of encodings can be set via `prefer` setting.
 
 > There is currently no way to set a prefered order of content-encodings via
