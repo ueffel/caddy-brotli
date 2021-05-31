@@ -9,6 +9,12 @@ Uses the pure go brotli implementation <https://github.com/andybalholm/brotli>
 This implementation is NOT high performance, so it is not recommended to use this encoding as
 primary compression algorithm. Use gzip instead.
 
+## Installation
+
+```sh
+xcaddy build --with github.com/ueffel/caddy-brotli
+```
+
 ## Syntax
 
 There will be the new encoding `br` available within the
