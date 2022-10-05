@@ -29,12 +29,12 @@ func (Brotli) CaddyModule() caddy.ModuleInfo {
 
 // UnmarshalCaddyfile sets up the encoder from Caddyfile tokens.
 func (b *Brotli) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
+	b.Level = -1
 	for d.Next() {
 		if !d.NextArg() {
 			continue
 		}
-		levelStr := d.Val()
-		level, err := strconv.Atoi(levelStr)
+		level, err := strconv.Atoi(d.Val())
 		if err != nil {
 			return err
 		}
@@ -45,7 +45,7 @@ func (b *Brotli) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 
 // Provision provisions b's configuration.
 func (b *Brotli) Provision(ctx caddy.Context) error {
-	if b.Level == 0 {
+	if b.Level == -1 {
 		b.Level = defaultBrotliLevel
 	}
 	return nil
@@ -72,9 +72,9 @@ func (b Brotli) NewEncoder() encode.Encoder {
 	return writer
 }
 
-var defaultBrotliLevel = 4
+const defaultBrotliLevel = 4
 
-// Interface guards
+// Interface guards.
 var (
 	_ encode.Encoding       = (*Brotli)(nil)
 	_ caddy.Provisioner     = (*Brotli)(nil)
