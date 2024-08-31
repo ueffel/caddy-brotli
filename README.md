@@ -7,14 +7,7 @@ Requires Caddy 2+.
 Uses the pure go brotli implementation <https://github.com/andybalholm/brotli>
 
 This implementation is NOT high performance, so it is not recommended to use this encoding as
-primary compression algorithm. Use gzip or zstd instead.
-
-The new matchfinder algorithm implementation in andybalholm/brotli is also supported, use with `v2`.
-
-> Currently they [new compression algorithms] give better results than the old implementation (at least for compressing
-> my test file, Newton’s Opticks) on levels 2 to 7.
-
-quoted from the README of <https://github.com/andybalholm/brotli>.
+primary compression algorithm. Use gzip instead.
 
 ## Installation
 
@@ -29,13 +22,11 @@ There will be the new encoding `br` available within the
 
 ```caddyfile
 encode [<matcher>] <formats...> {
-    br [[<level>] [v2]]
+    br [<level>]
 }
 ```
 
-* `level` controls the compression level (ranges from 0 to 11), default is 4.  
-  for the new algorithm (`v2`) the levels range from 2 to 7, default is also 4.
-* `v2` if set the new brotli algorithm is used
+`level` controls the compression level (ranges from 0 to 11), default is 4.
 
 Example usages could look like this:
 
@@ -49,19 +40,7 @@ encode {
 }
 ```
 
-```caddyfile
-encode {
-    br v2
-}
-```
-
-```caddyfile
-encode {
-    br 4 v2
-}
-```
-
-or together with other encodings like gzip
+or together with gzip
 
 ```caddyfile
 encode gzip br

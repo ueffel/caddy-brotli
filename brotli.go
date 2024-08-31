@@ -16,8 +16,7 @@ func init() {
 
 // Brotli can create brotli encoders.
 type Brotli struct {
-	Level int  `json:"level,omitempty"`
-	UseV2 bool `json:"use_v2,omitempty"`
+	Level int `json:"level,omitempty"`
 }
 
 // CaddyModule returns the Caddy module information.
@@ -32,37 +31,14 @@ func (Brotli) CaddyModule() caddy.ModuleInfo {
 func (b *Brotli) UnmarshalCaddyfile(d *caddyfile.Dispenser) error {
 	b.Level = -1
 	for d.Next() {
-		switch d.CountRemainingArgs() {
-		case 0:
+		if !d.NextArg() {
 			continue
-		case 1:
-			d.NextArg()
-			if d.Val() == "v2" {
-				b.UseV2 = true
-				continue
-			}
-
-			level, err := strconv.Atoi(d.Val())
-			if err != nil {
-				return err
-			}
-			b.Level = level
-		case 2:
-			d.NextArg()
-			level, err := strconv.Atoi(d.Val())
-			if err != nil {
-				return err
-			}
-			b.Level = level
-
-			d.NextArg()
-			if d.Val() != "v2" {
-				return d.Errf("invalid argument: %s", d.Val())
-			}
-			b.UseV2 = true
-		default:
-			return d.Errf("too many arguments (%d)", d.CountRemainingArgs())
 		}
+		level, err := strconv.Atoi(d.Val())
+		if err != nil {
+			return err
+		}
+		b.Level = level
 	}
 	return nil
 }
@@ -77,20 +53,11 @@ func (b *Brotli) Provision(ctx caddy.Context) error {
 
 // Validate validates b's configuration.
 func (b Brotli) Validate() error {
-	if b.UseV2 {
-		if b.Level < brotliV2MinLevel {
-			return fmt.Errorf("quality too low; must be >= %d for the new algorithm", brotliV2MinLevel)
-		}
-		if b.Level > brotliV2MaxLevel {
-			return fmt.Errorf("quality too high; must be <= %d for the new algorithm", brotliV2MaxLevel)
-		}
-	} else {
-		if b.Level < brotli.BestSpeed {
-			return fmt.Errorf("quality too low; must be >= %d", brotli.BestSpeed)
-		}
-		if b.Level > brotli.BestCompression {
-			return fmt.Errorf("quality too high; must be <= %d", brotli.BestCompression)
-		}
+	if b.Level < brotli.BestSpeed {
+		return fmt.Errorf("quality too low; must be >= %d", brotli.BestSpeed)
+	}
+	if b.Level > brotli.BestCompression {
+		return fmt.Errorf("quality too high; must be <= %d", brotli.BestCompression)
 	}
 	return nil
 }
@@ -100,18 +67,12 @@ func (b Brotli) Validate() error {
 func (Brotli) AcceptEncoding() string { return "br" }
 
 // NewEncoder returns a new brotli writer.
-func (b *Brotli) NewEncoder() encode.Encoder {
-	if b.UseV2 {
-		return brotli.NewWriterV2(nil, b.Level)
-	}
-	return brotli.NewWriterLevel(nil, b.Level)
+func (b Brotli) NewEncoder() encode.Encoder {
+	writer := brotli.NewWriterLevel(nil, b.Level)
+	return writer
 }
 
-const (
-	defaultBrotliLevel = 4
-	brotliV2MinLevel   = 2
-	brotliV2MaxLevel   = 7
-)
+const defaultBrotliLevel = 4
 
 // Interface guards.
 var (
