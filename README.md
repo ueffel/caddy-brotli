@@ -4,10 +4,13 @@ This package implements a brotli encoder for [Caddy](https://caddyserver.com/).
 
 Requires Caddy 2+.
 
-Uses the pure go brotli implementation <https://github.com/andybalholm/brotli>
+Uses the pure Go Brotli implementation <https://github.com/andybalholm/brotli>
 
-This implementation is NOT high performance, so it is not recommended to use this encoding as
-primary compression algorithm. Use gzip instead.
+This implementation is not high performance on better compression levels (5-12), so it is not recommended 
+to use this encoding as primary compression algorithm. Use zstd with a gzip fallback instead.
+
+Zstd (klauspost/compress) at level `better` is 3x faster than Brotli at level 4 (similar compression ratios 
+on `Isaac.Newton-Opticks.txt` test data).
 
 ## Installation
 
