@@ -4,13 +4,18 @@ This package implements a brotli encoder for [Caddy](https://caddyserver.com/).
 
 Requires Caddy 2+.
 
-Uses the pure Go Brotli implementation <https://github.com/andybalholm/brotli>
+Uses the pure Go Brotli implementation <https://github.com/molecule-man/go-brrr>, this seems to have better performance
+than the previously used implementation <https://github.com/andybalholm/brotli>.
 
-This implementation is not high performance on better compression levels (5-12), so it is not recommended 
-to use this encoding as primary compression algorithm. Use zstd with a gzip fallback instead.
+To quote from [it's README](https://github.com/molecule-man/go-brrr#when-to-use-go-brrr) for when to use brotli:
 
-Zstd (klauspost/compress) at level `better` is 3x faster than Brotli at level 4 (similar compression ratios 
-on `Isaac.Newton-Opticks.txt` test data).
+> For on-the-fly compression, brotli q5-6 is a strong choice if you're already using zstd at its highest level: q5 is
+> often faster with a better ratio, and q6 is only slightly slower with an even better ratio. At lower compression
+> levels, zstd is significantly faster - if throughput is your priority and you don't need the best ratio, zstd is the
+> better tool for the job.
+
+Within caddy that means, that you probably shouldn't use brotli encoding as primary compression algorithm. Zstd and gzip
+are the better choice to maximize throughput.
 
 ## Installation
 

@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/andybalholm/brotli"
 	"github.com/caddyserver/caddy/v2"
 	"github.com/caddyserver/caddy/v2/caddyconfig/caddyfile"
 	"github.com/caddyserver/caddy/v2/modules/caddyhttp/encode"
+	"github.com/molecule-man/go-brrr"
 )
 
 func init() {
@@ -53,11 +53,11 @@ func (b *Brotli) Provision(ctx caddy.Context) error {
 
 // Validate validates b's configuration.
 func (b Brotli) Validate() error {
-	if b.Level < brotli.BestSpeed {
-		return fmt.Errorf("quality too low; must be >= %d", brotli.BestSpeed)
+	if b.Level < brrr.BestSpeed {
+		return fmt.Errorf("quality too low; must be >= %d", brrr.BestSpeed)
 	}
-	if b.Level > brotli.BestCompression {
-		return fmt.Errorf("quality too high; must be <= %d", brotli.BestCompression)
+	if b.Level > brrr.BestCompression {
+		return fmt.Errorf("quality too high; must be <= %d", brrr.BestCompression)
 	}
 	return nil
 }
@@ -68,7 +68,7 @@ func (Brotli) AcceptEncoding() string { return "br" }
 
 // NewEncoder returns a new brotli writer.
 func (b Brotli) NewEncoder() encode.Encoder {
-	writer := brotli.NewWriterLevel(nil, b.Level)
+	writer, _ := brrr.NewWriter(nil, b.Level)
 	return writer
 }
 

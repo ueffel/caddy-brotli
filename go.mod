@@ -3,8 +3,8 @@ module github.com/ueffel/caddy-brotli
 go 1.24
 
 require (
-	github.com/andybalholm/brotli v1.1.1
 	github.com/caddyserver/caddy/v2 v2.10.0
+	github.com/molecule-man/go-brrr v0.4.0
 )
 
 require (
